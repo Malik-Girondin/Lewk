@@ -5,7 +5,6 @@ using System.Configuration;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace C969
 {
@@ -75,7 +74,7 @@ namespace C969
         {
             textBox1.Text = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToShortDateString();
             comboBox1.SelectedItem = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToString("hh:mm tt");
-            textBox4.Text = _selectedRow.Cells["Type"].Value.ToString();
+            textBox4.Text = _selectedRow.Cells["Title"].Value.ToString();
             textBox5.Text = _selectedRow.Cells["Description"].Value.ToString();
             textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
             // Set the time zone (assuming it's stored in the DataGridView)
@@ -165,10 +164,10 @@ namespace C969
         private int InsertNewUser(string userName, MySqlConnection con)
         {
             string userQuery = @"
-        INSERT INTO user (UserName, Password, Active, CreateDate, CreatedBy, LastUpdate, LastUpdateBy)
-        VALUES (@UserName, @Password, @Active, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy);
-        SELECT LAST_INSERT_ID();
-    ";
+                INSERT INTO user (UserName, Password, Active, CreateDate, CreatedBy, LastUpdate, LastUpdateBy)
+                VALUES (@UserName, @Password, @Active, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy);
+                SELECT LAST_INSERT_ID();
+            ";
 
             MySqlCommand userCmd = new MySqlCommand(userQuery, con);
             userCmd.Parameters.AddWithValue("@UserName", userName);
@@ -288,14 +287,16 @@ namespace C969
                 DateTime end = start.AddHours(0.25);
                 string type = textBox4.Text;
                 string description = textBox5.Text;
+                string timeZone = comboBox2.SelectedItem?.ToString();
 
-                string query = "UPDATE Appointment SET Start = @Start, End = @End, Type = @Type, Description = @Description WHERE appointmentId = @AppointmentId";
+                string query = "UPDATE Appointment SET Start = @Start, End = @End, Type = @Type, Description = @Description, TimeZone = @TimeZone WHERE appointmentId = @AppointmentId";
                 using (MySqlCommand cmd = new MySqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@Start", start);
                     cmd.Parameters.AddWithValue("@End", end);
                     cmd.Parameters.AddWithValue("@Type", type);
                     cmd.Parameters.AddWithValue("@Description", description);
+                    cmd.Parameters.AddWithValue("@TimeZone", timeZone);
                     cmd.Parameters.AddWithValue("@AppointmentId", appointmentId);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
@@ -413,12 +414,10 @@ namespace C969
 
         private void label4_Click(object sender, EventArgs e)
         {
-
         }
 
         private void label7_Click(object sender, EventArgs e)
         {
-
         }
     }
 }
