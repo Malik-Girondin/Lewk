@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace C969
 {
@@ -72,31 +73,13 @@ namespace C969
 
         private void LoadAppointmentDetails()
         {
-            if (_selectedRow != null)
-            {
-                // Assuming the DataGridView has columns named: CustomerID, Start, Type, Description, and TimeZone
-                textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
-                textBox1.Text = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToShortDateString();
-                comboBox1.Text = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToString("hh:mm tt");
-                textBoxType.Text = _selectedRow.Cells["Type"].Value.ToString();
-                textBox5.Text = _selectedRow.Cells["Description"].Value.ToString();
-                comboBox2.Text = _selectedRow.Cells["TimeZone"].Value.ToString();
-            }
-        }
-
-        private void UpdateUIElements(DateTime selectedDate)
-        {
-            if (textBox1.InvokeRequired)
-            {
-                textBox1.Invoke((Action)(() =>
-                {
-                    textBox1.Text = selectedDate.ToShortDateString();
-                }));
-            }
-            else
-            {
-                textBox1.Text = selectedDate.ToShortDateString();
-            }
+            textBox1.Text = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToShortDateString();
+            comboBox1.SelectedItem = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToString("hh:mm tt");
+            textBoxType.Text = _selectedRow.Cells["Type"].Value.ToString();
+            textBox5.Text = _selectedRow.Cells["Description"].Value.ToString();
+            textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
+            // Set the time zone (assuming it's stored in the DataGridView)
+            comboBox2.SelectedItem = _selectedRow.Cells["TimeZone"].Value.ToString();
         }
 
         private void CheckAppointmentsWithin15Minutes()
@@ -426,6 +409,16 @@ namespace C969
         private void button2_Click_1(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
