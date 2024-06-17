@@ -33,8 +33,6 @@ namespace C969
             this.button1 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.labelType = new System.Windows.Forms.Label();
-            this.textBoxType = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // textBox4
@@ -173,29 +171,11 @@ namespace C969
             this.label2.TabIndex = 34;
             this.label2.Text = "Start Date";
             // 
-            // labelType
-            // 
-            this.labelType.AutoSize = true;
-            this.labelType.Location = new System.Drawing.Point(425, 250);
-            this.labelType.Name = "labelType";
-            this.labelType.Size = new System.Drawing.Size(45, 20);
-            this.labelType.TabIndex = 50;
-            this.labelType.Text = "Type";
-            // 
-            // textBoxType
-            // 
-            this.textBoxType.Location = new System.Drawing.Point(526, 250);
-            this.textBoxType.Name = "textBoxType";
-            this.textBoxType.Size = new System.Drawing.Size(228, 26);
-            this.textBoxType.TabIndex = 51;
-            // 
             // UpdateAppointment
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.textBoxType);
-            this.Controls.Add(this.labelType);
             this.Controls.Add(this.textBox4);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
@@ -237,7 +217,5 @@ namespace C969
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label labelType;
-        private System.Windows.Forms.TextBox textBoxType;
     }
 }

@@ -23,8 +23,13 @@ namespace C969
             this.Close();
         }
 
-        private int appointmentId_Counter;
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            // Add functionality for this button if needed
+            this.Close();
+        }
 
+        private int appointmentId_Counter;
         private int userId_Counter;
 
         public int GetCustomerIdByName(string customerName)
@@ -190,7 +195,7 @@ namespace C969
 
                     string description = textBox5.Text;
                     string location = "Main Office";
-                    string type = textBoxType.Text;  // Capture type
+                    string type = textBox4.Text;  // Capture type from textBox4
                     string contact = GetPhoneByCustomerId(customerName).ToString();
                     string url = ".";
                     DateTime selectedDate = monthCalendar1.SelectionStart.Date;

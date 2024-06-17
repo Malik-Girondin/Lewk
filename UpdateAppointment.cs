@@ -75,7 +75,7 @@ namespace C969
         {
             textBox1.Text = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToShortDateString();
             comboBox1.SelectedItem = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToString("hh:mm tt");
-            textBoxType.Text = _selectedRow.Cells["Type"].Value.ToString();
+            textBox4.Text = _selectedRow.Cells["Type"].Value.ToString();
             textBox5.Text = _selectedRow.Cells["Description"].Value.ToString();
             textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
             // Set the time zone (assuming it's stored in the DataGridView)
@@ -286,7 +286,7 @@ namespace C969
                 DateTime selectedTime = DateTime.ParseExact(comboBox1.Text, "hh:mm tt", CultureInfo.InvariantCulture);
                 DateTime start = selectedDate.Add(selectedTime.TimeOfDay);
                 DateTime end = start.AddHours(0.25);
-                string type = textBoxType.Text;
+                string type = textBox4.Text;
                 string description = textBox5.Text;
 
                 string query = "UPDATE Appointment SET Start = @Start, End = @End, Type = @Type, Description = @Description WHERE appointmentId = @AppointmentId";
