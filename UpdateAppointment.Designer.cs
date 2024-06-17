@@ -1,4 +1,4 @@
-﻿namespace C969
+namespace C969
 {
     partial class UpdateAppointment
     {
