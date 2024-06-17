@@ -5,7 +5,6 @@ using System.Configuration;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace C969
 {
@@ -21,8 +20,6 @@ namespace C969
             _selectedRow = selectedRow;
         }
 
-        private int appointmentId_Counter;
-
         private async void UpdateAppointment_Load(object sender, EventArgs e)
         {
             System.Windows.Forms.TextBox.CheckForIllegalCrossThreadCalls = false;
@@ -34,6 +31,7 @@ namespace C969
                 {
                     PopulateTimeZones();
                     PopulateAppointmentTimes();
+                    LoadAppointmentDetails();
                     CheckAppointmentsWithin15Minutes();
                 }
                 catch (Exception ex)
@@ -50,11 +48,6 @@ namespace C969
             {
                 comboBox2.Items.Add(timeZone.Id);
             }
-
-            if (comboBox2.Items.Count > 0)
-            {
-                selectedTimeZoneId = comboBox2.Items[0].ToString();
-            }
         }
 
         private void PopulateAppointmentTimes()
@@ -68,6 +61,18 @@ namespace C969
                     comboBox1.Items.Add(time.ToString("hh:mm tt"));
                 }
             }
+        }
+
+        private void LoadAppointmentDetails()
+        {
+            if (_selectedRow == null) return;
+
+            textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
+            textBox1.Text = DateTime.Parse(_selectedRow.Cells["Start"].Value.ToString()).ToShortDateString();
+            textBox4.Text = _selectedRow.Cells["Reason"].Value.ToString();
+            textBoxType.Text = _selectedRow.Cells["Type"].Value.ToString();
+            comboBox1.SelectedItem = DateTime.Parse(_selectedRow.Cells["Start"].Value.ToString()).ToString("hh:mm tt");
+            comboBox2.SelectedItem = _selectedRow.Cells["TimeZone"].Value.ToString();  // Ensure you have a TimeZone column in your DataGridView.
         }
 
         private void UpdateUIElements(DateTime selectedDate)
@@ -412,6 +417,16 @@ namespace C969
         private void button2_Click_1(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
