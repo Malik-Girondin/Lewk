@@ -5,7 +5,6 @@ using System.Configuration;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace C969
 {
@@ -20,6 +19,8 @@ namespace C969
             InitializeComponent();
             _selectedRow = selectedRow;
         }
+
+        private int appointmentId_Counter;
 
         private async void UpdateAppointment_Load(object sender, EventArgs e)
         {
@@ -73,14 +74,19 @@ namespace C969
         {
             textBox1.Text = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToShortDateString();
             comboBox1.SelectedItem = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToString("hh:mm tt");
-            textBox4.Text = _selectedRow.Cells["Type"].Value.ToString();  // Assuming textBox4 is for "Type"
+            textBox4.Text = _selectedRow.Cells["Type"].Value.ToString();
             textBox5.Text = _selectedRow.Cells["Description"].Value.ToString();
             textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
-            comboBox2.SelectedItem = _selectedRow.Cells["TimeZone"].Value.ToString();  // Assuming TimeZone is a column in DataGridView
+            // Assuming TimeZone column exists in your DataGridView and database
+            if (_selectedRow.Cells["TimeZone"] != null)
+            {
+                comboBox2.SelectedItem = _selectedRow.Cells["TimeZone"].Value.ToString();
+            }
         }
 
         private void CheckAppointmentsWithin15Minutes()
         {
+            AddAppointment form = new AddAppointment();
             string connectionString = ConfigurationManager.ConnectionStrings["localdb"].ConnectionString;
             using (MySqlConnection con = new MySqlConnection(connectionString))
             {
@@ -95,7 +101,7 @@ namespace C969
                     ";
                     using (MySqlCommand cmd = new MySqlCommand(query, con))
                     {
-                        cmd.Parameters.AddWithValue("@CustomerId", GetCustomerIdByName(textBox3.Text));
+                        cmd.Parameters.AddWithValue("@CustomerId", GetCustomerIdByName(form.textBox3.Text));
                         int count = Convert.ToInt32(cmd.ExecuteScalar());
                         if (count > 0)
                         {
@@ -161,10 +167,10 @@ namespace C969
         private int InsertNewUser(string userName, MySqlConnection con)
         {
             string userQuery = @"
-                INSERT INTO user (UserName, Password, Active, CreateDate, CreatedBy, LastUpdate, LastUpdateBy)
-                VALUES (@UserName, @Password, @Active, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy);
-                SELECT LAST_INSERT_ID();
-            ";
+        INSERT INTO user (UserName, Password, Active, CreateDate, CreatedBy, LastUpdate, LastUpdateBy)
+        VALUES (@UserName, @Password, @Active, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy);
+        SELECT LAST_INSERT_ID();
+    ";
 
             MySqlCommand userCmd = new MySqlCommand(userQuery, con);
             userCmd.Parameters.AddWithValue("@UserName", userName);
@@ -209,6 +215,30 @@ namespace C969
                 finally
                 {
                     con.Close();
+                }
+            }
+        }
+
+        public int GetPhoneByCustomerId(string customerName)
+        {
+            string query = "SELECT phone FROM customer WHERE CustomerName = @CustomerName";
+            string connectionString = ConfigurationManager.ConnectionStrings["localdb"].ConnectionString;
+
+            using (MySqlConnection con = new MySqlConnection(connectionString))
+            using (MySqlCommand cmd = new MySqlCommand(query, con))
+            {
+                try
+                {
+                    cmd.Parameters.AddWithValue("@CustomerName", customerName);
+                    con.Open();
+
+                    object result = cmd.ExecuteScalar();
+                    return result != null && result != DBNull.Value ? Convert.ToInt32(result) : -1;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                    return -1;
                 }
             }
         }
@@ -260,7 +290,7 @@ namespace C969
                 DateTime end = start.AddHours(0.25);
                 string type = textBox4.Text;
                 string description = textBox5.Text;
-                string timeZone = comboBox2.SelectedItem.ToString();
+                string timeZone = comboBox2.SelectedItem.ToString(); // Capture time zone
 
                 string query = "UPDATE Appointment SET Start = @Start, End = @End, Type = @Type, Description = @Description, TimeZone = @TimeZone WHERE appointmentId = @AppointmentId";
                 using (MySqlCommand cmd = new MySqlCommand(query, con))
@@ -269,7 +299,7 @@ namespace C969
                     cmd.Parameters.AddWithValue("@End", end);
                     cmd.Parameters.AddWithValue("@Type", type);
                     cmd.Parameters.AddWithValue("@Description", description);
-                    cmd.Parameters.AddWithValue("@TimeZone", timeZone);
+                    cmd.Parameters.AddWithValue("@TimeZone", timeZone); // Set time zone
                     cmd.Parameters.AddWithValue("@AppointmentId", appointmentId);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
@@ -383,6 +413,16 @@ namespace C969
         private void button2_Click_1(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
