@@ -20,6 +20,8 @@ namespace C969
             _selectedRow = selectedRow;
         }
 
+        private int appointmentId_Counter;
+
         private async void UpdateAppointment_Load(object sender, EventArgs e)
         {
             System.Windows.Forms.TextBox.CheckForIllegalCrossThreadCalls = false;
@@ -48,6 +50,11 @@ namespace C969
             {
                 comboBox2.Items.Add(timeZone.Id);
             }
+
+            if (comboBox2.Items.Count > 0)
+            {
+                selectedTimeZoneId = comboBox2.Items[0].ToString();
+            }
         }
 
         private void PopulateAppointmentTimes()
@@ -65,14 +72,16 @@ namespace C969
 
         private void LoadAppointmentDetails()
         {
-            if (_selectedRow == null) return;
-
-            textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
-            textBox1.Text = DateTime.Parse(_selectedRow.Cells["Start"].Value.ToString()).ToShortDateString();
-            textBox4.Text = _selectedRow.Cells["Reason"].Value.ToString();
-            textBoxType.Text = _selectedRow.Cells["Type"].Value.ToString();
-            comboBox1.SelectedItem = DateTime.Parse(_selectedRow.Cells["Start"].Value.ToString()).ToString("hh:mm tt");
-            comboBox2.SelectedItem = _selectedRow.Cells["TimeZone"].Value.ToString();  // Ensure you have a TimeZone column in your DataGridView.
+            if (_selectedRow != null)
+            {
+                // Assuming the DataGridView has columns named: CustomerID, Start, Type, Description, and TimeZone
+                textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
+                textBox1.Text = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToShortDateString();
+                comboBox1.Text = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToString("hh:mm tt");
+                textBoxType.Text = _selectedRow.Cells["Type"].Value.ToString();
+                textBox5.Text = _selectedRow.Cells["Description"].Value.ToString();
+                comboBox2.Text = _selectedRow.Cells["TimeZone"].Value.ToString();
+            }
         }
 
         private void UpdateUIElements(DateTime selectedDate)
@@ -295,15 +304,15 @@ namespace C969
                 DateTime start = selectedDate.Add(selectedTime.TimeOfDay);
                 DateTime end = start.AddHours(0.25);
                 string type = textBoxType.Text;
-                string reason = textBox4.Text;
+                string description = textBox5.Text;
 
-                string query = "UPDATE Appointment SET Start = @Start, End = @End, Type = @Type, Description = @Reason WHERE appointmentId = @AppointmentId";
+                string query = "UPDATE Appointment SET Start = @Start, End = @End, Type = @Type, Description = @Description WHERE appointmentId = @AppointmentId";
                 using (MySqlCommand cmd = new MySqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@Start", start);
                     cmd.Parameters.AddWithValue("@End", end);
                     cmd.Parameters.AddWithValue("@Type", type);
-                    cmd.Parameters.AddWithValue("@Reason", reason);
+                    cmd.Parameters.AddWithValue("@Description", description);
                     cmd.Parameters.AddWithValue("@AppointmentId", appointmentId);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
@@ -417,16 +426,6 @@ namespace C969
         private void button2_Click_1(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
