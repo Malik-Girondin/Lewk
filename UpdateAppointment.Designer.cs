@@ -208,8 +208,8 @@ namespace C969
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.ComboBox comboBox1;
+        public System.Windows.Forms.ComboBox comboBox2;
+        public System.Windows.Forms.ComboBox comboBox1;
         public System.Windows.Forms.TextBox textBox5;
         public System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.MonthCalendar monthCalendar1;

@@ -75,8 +75,11 @@ namespace C969
             textBox4.Text = _selectedRow.Cells["Title"].Value.ToString(); // Assuming "Title" column exists
             textBox5.Text = _selectedRow.Cells["Description"].Value.ToString();
             textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
-            // Assuming TimeZone column exists in your DataGridView and database
-            
+
+            // Retrieve the stored time zone from the dictionary
+            int appointmentId = Convert.ToInt32(_selectedRow.Cells["appointmentId"].Value);
+            string timeZoneValue = TimeZoneStorage.GetTimeZone(appointmentId);
+            comboBox2.SelectedItem = timeZoneValue;
         }
 
         private void CheckAppointmentsWithin15Minutes()
@@ -285,7 +288,7 @@ namespace C969
                 DateTime end = start.AddHours(0.25);
                 string type = textBox4.Text;
                 string description = textBox5.Text;
-                string timeZone = comboBox2.SelectedItem.ToString(); // Capture time zone
+                string timeZone = comboBox2.SelectedItem?.ToString();
 
                 // Update query to exclude non-existing columns
                 string query = "UPDATE Appointment SET Start = @Start, End = @End, Title = @Type, Description = @Description WHERE appointmentId = @AppointmentId";
@@ -301,6 +304,12 @@ namespace C969
                     if (rowsAffected > 0)
                     {
                         MessageBox.Show("Appointment details updated successfully.");
+
+                        // Save the updated time zone in the dictionary
+                        if (!string.IsNullOrEmpty(timeZone))
+                        {
+                            TimeZoneStorage.SaveTimeZone(appointmentId, timeZone);
+                        }
                     }
                     else
                     {

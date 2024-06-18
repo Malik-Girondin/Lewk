@@ -372,17 +372,25 @@ namespace C969
                 DateTime startDateTime = (DateTime)dataGridView2.SelectedRows[0].Cells["Start"].Value;
                 string startDateStrung = startDateTime.ToString("MM-dd-yyyy");
                 form.textBox1.Text = startDateStrung;
+                form.comboBox1.SelectedItem = startDateTime.ToString("hh:mm tt");
                 form.textBox4.Text = dataGridView2.SelectedRows[0].Cells["Title"].Value.ToString();
                 form.textBox5.Text = dataGridView2.SelectedRows[0].Cells["Description"].Value.ToString();
                 form.textBox3.Text = dataGridView2.SelectedRows[0].Cells["CustomerID"].Value.ToString();
+
+                // Retrieve and set the stored time zone in the form
+                int appointmentId = Convert.ToInt32(dataGridView2.SelectedRows[0].Cells["appointmentId"].Value);
+                string timeZoneValue = TimeZoneStorage.GetTimeZone(appointmentId);
+                form.comboBox2.SelectedItem = timeZoneValue;
+
                 form.ShowDialog();
-                UpdateDataGridView2(); ;
+                UpdateDataGridView2();
             }
             else
             {
                 MessageBox.Show("No row has been selected");
             }
         }
+
 
         public static void NumberOfAppointmentTypesByMonth(List<Appointment> appointments)
         {
