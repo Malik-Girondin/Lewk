@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 public static class TimeZoneStorage
 {
@@ -14,17 +15,23 @@ public static class TimeZoneStorage
         {
             timeZoneDictionary.Add(appointmentId, timeZone);
         }
+        // Debug Statement
+        Console.WriteLine($"GetTimeZone: appointmentId={appointmentId}, timeZone={timeZone}");
+
     }
 
     public static string GetTimeZone(int appointmentId)
     {
         if (timeZoneDictionary.TryGetValue(appointmentId, out string timeZone))
         {
+            // Debug statement
+            Console.WriteLine($"GetTimeZone: appointmentId={appointmentId}, timeZone={timeZone}");
+
             return timeZone;
         }
         else
         {
-            return null; // or a default value
+            return null;
         }
     }
 }
