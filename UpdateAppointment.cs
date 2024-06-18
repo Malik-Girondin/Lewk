@@ -74,7 +74,9 @@ namespace C969
             comboBox1.SelectedItem = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToString("hh:mm tt");
             textBox4.Text = _selectedRow.Cells["Title"].Value.ToString(); // Assuming "Title" column exists
             textBox5.Text = _selectedRow.Cells["Description"].Value.ToString();
-            textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
+
+            int customerId = Convert.ToInt32(_selectedRow.Cells["CustomerID"].Value);
+            textBox3.Text = GetCustomerNameById(customerId); // Fetch and display the customer name
 
             // Retrieve and set the stored time zone
             int appointmentId = Convert.ToInt32(_selectedRow.Cells["appointmentId"].Value);
@@ -82,7 +84,29 @@ namespace C969
             comboBox2.SelectedItem = timeZoneValue;
         }
 
+        private string GetCustomerNameById(int customerId)
+        {
+            string query = "SELECT CustomerName FROM customer WHERE CustomerID = @CustomerID";
+            string connectionString = ConfigurationManager.ConnectionStrings["localdb"].ConnectionString;
 
+            using (MySqlConnection con = new MySqlConnection(connectionString))
+            using (MySqlCommand cmd = new MySqlCommand(query, con))
+            {
+                try
+                {
+                    cmd.Parameters.AddWithValue("@CustomerID", customerId);
+                    con.Open();
+
+                    object result = cmd.ExecuteScalar();
+                    return result != null && result != DBNull.Value ? result.ToString() : string.Empty;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                    return string.Empty;
+                }
+            }
+        }
 
         private void CheckAppointmentsWithin15Minutes()
         {
