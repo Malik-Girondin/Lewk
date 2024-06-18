@@ -5,7 +5,6 @@ using System.Configuration;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace C969
 {
@@ -75,11 +74,14 @@ namespace C969
         {
             textBox1.Text = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToShortDateString();
             comboBox1.SelectedItem = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToString("hh:mm tt");
-            textBoxType.Text = _selectedRow.Cells["Type"].Value.ToString();
+            textBox4.Text = _selectedRow.Cells["Type"].Value.ToString();
             textBox5.Text = _selectedRow.Cells["Description"].Value.ToString();
             textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
-            // Set the time zone (assuming it's stored in the DataGridView)
-            comboBox2.SelectedItem = _selectedRow.Cells["TimeZone"].Value.ToString();
+            // Assuming TimeZone column exists in your DataGridView and database
+            if (_selectedRow.Cells["TimeZone"] != null)
+            {
+                comboBox2.SelectedItem = _selectedRow.Cells["TimeZone"].Value.ToString();
+            }
         }
 
         private void CheckAppointmentsWithin15Minutes()
@@ -286,8 +288,9 @@ namespace C969
                 DateTime selectedTime = DateTime.ParseExact(comboBox1.Text, "hh:mm tt", CultureInfo.InvariantCulture);
                 DateTime start = selectedDate.Add(selectedTime.TimeOfDay);
                 DateTime end = start.AddHours(0.25);
-                string type = textBoxType.Text;
+                string type = textBox4.Text;
                 string description = textBox5.Text;
+                string timeZone = comboBox2.SelectedItem.ToString(); // Capture time zone
 
                 string query = "UPDATE Appointment SET Start = @Start, End = @End, Type = @Type, Description = @Description, TimeZone = @TimeZone WHERE appointmentId = @AppointmentId";
                 using (MySqlCommand cmd = new MySqlCommand(query, con))
@@ -296,7 +299,7 @@ namespace C969
                     cmd.Parameters.AddWithValue("@End", end);
                     cmd.Parameters.AddWithValue("@Type", type);
                     cmd.Parameters.AddWithValue("@Description", description);
-                    cmd.Parameters.AddWithValue("@TimeZone", comboBox2.SelectedItem.ToString());
+                    cmd.Parameters.AddWithValue("@TimeZone", timeZone); // Set time zone
                     cmd.Parameters.AddWithValue("@AppointmentId", appointmentId);
 
                     int rowsAffected = cmd.ExecuteNonQuery();

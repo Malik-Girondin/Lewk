@@ -83,6 +83,7 @@ namespace C969
             }
         }
 
+
         private void AppointmentTimer_Tick(object sender, EventArgs e)
         {
             GenerateAppointmentAlerts();
@@ -196,7 +197,7 @@ namespace C969
                 {
                     con.Open();
 
-                    string query = "SELECT appointment.CustomerID, appointment.Title, appointment.Description, appointment.Start, appointment.End, appointment.TimeZone, appointment.Type " +
+                    string query = "SELECT appointment.CustomerID, appointment.Title, appointment.Description, appointment.Start, appointment.End " +
                                    "FROM appointment ";
 
                     MySqlCommand cmd = new MySqlCommand(query, con);
