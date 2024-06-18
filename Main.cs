@@ -397,6 +397,7 @@ namespace C969
 
 
 
+
         public static void NumberOfAppointmentTypesByMonth(List<Appointment> appointments)
         {
 

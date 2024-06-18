@@ -76,11 +76,12 @@ namespace C969
             textBox5.Text = _selectedRow.Cells["Description"].Value.ToString();
             textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
 
-            // Retrieve the stored time zone from the dictionary
+            // Retrieve and set the stored time zone
             int appointmentId = Convert.ToInt32(_selectedRow.Cells["appointmentId"].Value);
             string timeZoneValue = TimeZoneStorage.GetTimeZone(appointmentId);
             comboBox2.SelectedItem = timeZoneValue;
         }
+
 
         private void CheckAppointmentsWithin15Minutes()
         {

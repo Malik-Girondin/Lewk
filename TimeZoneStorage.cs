@@ -1,23 +1,30 @@
 ﻿using System.Collections.Generic;
 
-namespace C969
+public static class TimeZoneStorage
 {
-    public static class TimeZoneStorage
-    {
-        private static Dictionary<int, string> timeZoneDictionary = new Dictionary<int, string>();
+    private static Dictionary<int, string> timeZoneDictionary = new Dictionary<int, string>();
 
-        public static void SetTimeZone(int appointmentId, string timeZone)
+    public static void SetTimeZone(int appointmentId, string timeZone)
+    {
+        if (timeZoneDictionary.ContainsKey(appointmentId))
         {
             timeZoneDictionary[appointmentId] = timeZone;
         }
-
-        public static string GetTimeZone(int appointmentId)
+        else
         {
-            if (timeZoneDictionary.TryGetValue(appointmentId, out string timeZone))
-            {
-                return timeZone;
-            }
-            return null;
+            timeZoneDictionary.Add(appointmentId, timeZone);
+        }
+    }
+
+    public static string GetTimeZone(int appointmentId)
+    {
+        if (timeZoneDictionary.TryGetValue(appointmentId, out string timeZone))
+        {
+            return timeZone;
+        }
+        else
+        {
+            return null; // or a default value
         }
     }
 }
