@@ -12,7 +12,6 @@ namespace C969
         private ReportGenerator reportGenerator;
         private string connectionString;
         private Timer appointmentTimer;
-
         public Main()
         {
             InitializeComponent();
@@ -83,6 +82,7 @@ namespace C969
                 }
             }
         }
+
 
         private void AppointmentTimer_Tick(object sender, EventArgs e)
         {

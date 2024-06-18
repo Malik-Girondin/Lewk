@@ -11,12 +11,16 @@ namespace C969
     public partial class UpdateAppointment : Form
     {
         private DataGridViewRow _selectedRow;
+        private string selectedTimeZoneId;
+        private DateTime selectedDate;
 
         public UpdateAppointment(DataGridViewRow selectedRow)
         {
             InitializeComponent();
             _selectedRow = selectedRow;
         }
+
+        private int appointmentId_Counter;
 
         private async void UpdateAppointment_Load(object sender, EventArgs e)
         {
@@ -27,6 +31,7 @@ namespace C969
             {
                 try
                 {
+                    PopulateTimeZones();
                     PopulateAppointmentTimes();
                     LoadAppointmentDetails();
                     CheckAppointmentsWithin15Minutes();
@@ -36,6 +41,20 @@ namespace C969
                     MessageBox.Show("Error: " + ex.Message);
                 }
             });
+        }
+
+        private void PopulateTimeZones()
+        {
+            comboBox2.Items.Clear();
+            foreach (var timeZone in TimeZoneInfo.GetSystemTimeZones())
+            {
+                comboBox2.Items.Add(timeZone.Id);
+            }
+
+            if (comboBox2.Items.Count > 0)
+            {
+                selectedTimeZoneId = comboBox2.Items[0].ToString();
+            }
         }
 
         private void PopulateAppointmentTimes()
@@ -58,6 +77,11 @@ namespace C969
             textBox4.Text = _selectedRow.Cells["Type"].Value.ToString();
             textBox5.Text = _selectedRow.Cells["Description"].Value.ToString();
             textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
+            // Assuming TimeZone column exists in your DataGridView and database
+            if (_selectedRow.Cells["TimeZone"] != null)
+            {
+                comboBox2.SelectedItem = _selectedRow.Cells["TimeZone"].Value.ToString();
+            }
         }
 
         private void CheckAppointmentsWithin15Minutes()
@@ -266,14 +290,16 @@ namespace C969
                 DateTime end = start.AddHours(0.25);
                 string type = textBox4.Text;
                 string description = textBox5.Text;
+                string timeZone = comboBox2.SelectedItem.ToString(); // Capture time zone
 
-                string query = "UPDATE Appointment SET Start = @Start, End = @End, Type = @Type, Description = @Description WHERE appointmentId = @AppointmentId";
+                string query = "UPDATE Appointment SET Start = @Start, End = @End, Type = @Type, Description = @Description, TimeZone = @TimeZone WHERE appointmentId = @AppointmentId";
                 using (MySqlCommand cmd = new MySqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@Start", start);
                     cmd.Parameters.AddWithValue("@End", end);
                     cmd.Parameters.AddWithValue("@Type", type);
                     cmd.Parameters.AddWithValue("@Description", description);
+                    cmd.Parameters.AddWithValue("@TimeZone", timeZone); // Set time zone
                     cmd.Parameters.AddWithValue("@AppointmentId", appointmentId);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
@@ -343,8 +369,18 @@ namespace C969
         {
             try
             {
+                string selectedTimeZoneId = string.Empty;
+                comboBox2.Invoke((Action)(() =>
+                {
+                    selectedTimeZoneId = comboBox2.SelectedItem?.ToString();
+                }));
+
+                TimeZoneInfo selectedTimeZone = TimeZoneInfo.FindSystemTimeZoneById(selectedTimeZoneId);
+
                 DateTime selectedDate = monthCalendar1.SelectionStart;
-                DateTime localDateTime = selectedDate.ToLocalTime();
+                DateTimeOffset selectedDateTimeOffset = new DateTimeOffset(selectedDate, selectedTimeZone.GetUtcOffset(selectedDate));
+
+                DateTime localDateTime = selectedDateTimeOffset.LocalDateTime;
 
                 textBox1.Invoke((Action)(() =>
                 {
