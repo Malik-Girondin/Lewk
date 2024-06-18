@@ -76,10 +76,7 @@ namespace C969
             textBox5.Text = _selectedRow.Cells["Description"].Value.ToString();
             textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
             // Assuming TimeZone column exists in your DataGridView and database
-            if (_selectedRow.Cells["TimeZone"] != null)
-            {
-                comboBox2.SelectedItem = _selectedRow.Cells["TimeZone"].Value.ToString();
-            }
+            
         }
 
         private void CheckAppointmentsWithin15Minutes()
