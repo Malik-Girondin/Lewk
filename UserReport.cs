@@ -8,7 +8,7 @@ namespace C969
 {
     public class UserReport
     {
-        public int AppointmentID { get; set; }
+        public int appointmentId { get; set; }
         public int UserID { get; set; }
         public int CustomerID { get; set; }
         public DateTime Start { get; set; }
@@ -16,7 +16,7 @@ namespace C969
 
         public UserReport(int appointmentID, int userId, int customerID, DateTime start, DateTime end)
         {
-            AppointmentID = appointmentID;
+            appointmentId = appointmentID;
             UserID = userId;
             CustomerID = customerID;
             Start = start;

@@ -379,7 +379,7 @@ namespace C969
                 form.textBox3.Text = dataGridView2.SelectedRows[0].Cells["CustomerID"].Value.ToString();
 
                 // Retrieve and set the stored time zone in the form
-                int appointmentId = Convert.ToInt32(dataGridView2.SelectedRows[0].Cells["AppointmentID"].Value);
+                int appointmentId = Convert.ToInt32(dataGridView2.SelectedRows[0].Cells["appointmentId"].Value);
                 string timeZoneValue = TimeZoneStorage.GetTimeZone(appointmentId);
                 form.comboBox2.SelectedItem = timeZoneValue;
 
@@ -465,7 +465,7 @@ namespace C969
             DataTable dataTable = new DataTable();
 
             dataTable.Columns.Add("UserID", typeof(int));
-            dataTable.Columns.Add("AppointmentID", typeof(int));
+            dataTable.Columns.Add("appointmentId", typeof(int));
             dataTable.Columns.Add("Start", typeof(DateTime));
             dataTable.Columns.Add("End", typeof(DateTime));
 
@@ -475,7 +475,7 @@ namespace C969
                 {
                     DataRow row = dataTable.NewRow();
                     row["UserID"] = userReport.UserID;
-                    row["AppointmentID"] = userReport.AppointmentID;
+                    row["appointmentId"] = userReport.appointmentId;
                     row["Start"] = userReport.Start;
                     row["End"] = userReport.End;
                     dataTable.Rows.Add(row);
@@ -502,7 +502,7 @@ namespace C969
             DataTable dataTable = new DataTable();
 
             dataTable.Columns.Add("CustomerID", typeof(int));
-            dataTable.Columns.Add("AppointmentID", typeof(int));
+            dataTable.Columns.Add("appointmentId", typeof(int));
             dataTable.Columns.Add("Start", typeof(DateTime));
             dataTable.Columns.Add("End", typeof(DateTime));
 
@@ -513,7 +513,7 @@ namespace C969
                 {
                     DataRow row = dataTable.NewRow();
                     row["CustomerID"] = appointment.CustomerID;
-                    row["AppointmentID"] = appointment.AppointmentID;
+                    row["appointmentId"] = appointment.appointmentId;
                     row["Start"] = appointment.Start;
                     row["End"] = appointment.End;
                     dataTable.Rows.Add(row);

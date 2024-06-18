@@ -24,14 +24,14 @@ namespace C969
             using (MySqlConnection con = new MySqlConnection(connectionString))
             {
                 con.Open();
-                string query = "SELECT UserID, AppointmentID, CustomerID, Start, End FROM Appointment";
+                string query = "SELECT UserID, appointmentId, CustomerID, Start, End FROM Appointment";
                 using (MySqlCommand cmd = new MySqlCommand(query, con))
                 using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         int userId = reader.GetInt32(0); // UserID at index 0
-                        int appointmentID = reader.GetInt32(1); // AppointmentID at index 1
+                        int appointmentID = reader.GetInt32(1); // appointmentId at index 1
                         int customerID = reader.GetInt32(2); // CustomerID at index 2
                         DateTime start = reader.GetDateTime(3); // Start at index 3
                         DateTime end = reader.GetDateTime(4); // End at index 4
@@ -89,7 +89,7 @@ namespace C969
             {
                 con.Open();
                 string query = @"
-            SELECT CustomerID, AppointmentID, Start, End
+            SELECT CustomerID, appointmentId, Start, End
             FROM Appointment
             ORDER BY CustomerID, Start;
         ";
