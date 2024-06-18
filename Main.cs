@@ -197,7 +197,7 @@ namespace C969
                 {
                     con.Open();
 
-                    string query = "SELECT appointment.CustomerID, appointment.Title, appointment.Description, appointment.Start, appointment.End " +
+                    string query = "SELECT appointment.appointmentId, appointment.CustomerID, appointment.Title, appointment.Description, appointment.Start, appointment.End " +
                                    "FROM appointment ";
 
                     MySqlCommand cmd = new MySqlCommand(query, con);
@@ -216,6 +216,7 @@ namespace C969
                 }
             }
         }
+
 
         private void label1_Click(object sender, EventArgs e)
         {
@@ -391,6 +392,7 @@ namespace C969
                 MessageBox.Show("No row has been selected");
             }
         }
+
 
 
 
