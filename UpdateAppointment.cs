@@ -288,7 +288,7 @@ namespace C969
                 DateTime end = start.AddHours(0.25);
                 string type = textBox4.Text;
                 string description = textBox5.Text;
-                string timeZone = comboBox2.SelectedItem?.ToString();
+                string timeZone = comboBox2.SelectedItem.ToString(); // Capture time zone
 
                 // Update query to exclude non-existing columns
                 string query = "UPDATE Appointment SET Start = @Start, End = @End, Title = @Type, Description = @Description WHERE appointmentId = @AppointmentId";
@@ -303,13 +303,10 @@ namespace C969
                     int rowsAffected = cmd.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
-                        MessageBox.Show("Appointment details updated successfully.");
+                        // Save the time zone to the dictionary
+                        TimeZoneStorage.SaveTimeZone(appointmentId, comboBox2.SelectedItem.ToString());
 
-                        // Save the updated time zone in the dictionary
-                        if (!string.IsNullOrEmpty(timeZone))
-                        {
-                            TimeZoneStorage.SaveTimeZone(appointmentId, timeZone);
-                        }
+                        MessageBox.Show("Appointment details updated successfully.");
                     }
                     else
                     {

@@ -195,7 +195,7 @@ namespace C969
 
                     string description = textBox5.Text;
                     string location = "Main Office";
-                    string type = textBox4.Text;  // Capture type from textBox4
+                    string type = textBox4.Text;
                     string contact = GetPhoneByCustomerId(customerName).ToString();
                     string url = ".";
                     DateTime selectedDate = monthCalendar1.SelectionStart.Date;
@@ -215,9 +215,9 @@ namespace C969
                     string lastUpdateBy = "sqlUser";
 
                     string appointmentQuery = @"
-        INSERT INTO appointment (CustomerId, userId, title, description, location, contact, type, url, start, end, CreateDate, CreatedBy, LastUpdate, LastUpdateBy) 
-        VALUES (@CustomerId, @UserId, @Title, @Description, @Location, @Contact, @Type, @Url, @Start, @End, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy)
-    ";
+                INSERT INTO appointment (CustomerId, userId, title, description, location, contact, type, url, start, end, CreateDate, CreatedBy, LastUpdate, LastUpdateBy) 
+                VALUES (@CustomerId, @UserId, @Title, @Description, @Location, @Contact, @Type, @Url, @Start, @End, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy)
+            ";
 
                     MySqlCommand appointmentCmd = new MySqlCommand(appointmentQuery, con);
                     appointmentCmd.Parameters.AddWithValue("@CustomerId", customerId);
@@ -235,14 +235,9 @@ namespace C969
                     appointmentCmd.Parameters.AddWithValue("@LastUpdate", lastUpdate);
                     appointmentCmd.Parameters.AddWithValue("@LastUpdateBy", lastUpdateBy);
                     appointmentCmd.ExecuteNonQuery();
-                    int newAppointmentId = (int)appointmentCmd.LastInsertedId;
 
-                    // Save the selected time zone in the dictionary
-                    string timeZone = comboBox2.SelectedItem?.ToString();
-                    if (!string.IsNullOrEmpty(timeZone))
-                    {
-                        TimeZoneStorage.SaveTimeZone(newAppointmentId, timeZone);
-                    }
+                    // Save the time zone to the dictionary
+                    TimeZoneStorage.SaveTimeZone(appointmentId, comboBox2.SelectedItem.ToString());
 
                     Main form = (Main)Application.OpenForms["Main"];
                     if (form != null)
@@ -265,6 +260,7 @@ namespace C969
                 }
             }
         }
+
 
 
         private void PopulateTimeZones()

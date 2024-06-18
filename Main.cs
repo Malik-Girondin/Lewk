@@ -369,6 +369,7 @@ namespace C969
             {
                 DataGridViewRow selectedRow = dataGridView2.SelectedRows[0];
                 UpdateAppointment form = new UpdateAppointment(selectedRow);
+
                 DateTime startDateTime = (DateTime)dataGridView2.SelectedRows[0].Cells["Start"].Value;
                 string startDateStrung = startDateTime.ToString("MM-dd-yyyy");
                 form.textBox1.Text = startDateStrung;
@@ -378,7 +379,7 @@ namespace C969
                 form.textBox3.Text = dataGridView2.SelectedRows[0].Cells["CustomerID"].Value.ToString();
 
                 // Retrieve and set the stored time zone in the form
-                int appointmentId = Convert.ToInt32(dataGridView2.SelectedRows[0].Cells["appointmentId"].Value);
+                int appointmentId = Convert.ToInt32(dataGridView2.SelectedRows[0].Cells["AppointmentID"].Value);
                 string timeZoneValue = TimeZoneStorage.GetTimeZone(appointmentId);
                 form.comboBox2.SelectedItem = timeZoneValue;
 
@@ -390,6 +391,7 @@ namespace C969
                 MessageBox.Show("No row has been selected");
             }
         }
+
 
 
         public static void NumberOfAppointmentTypesByMonth(List<Appointment> appointments)
