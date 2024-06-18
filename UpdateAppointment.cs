@@ -196,6 +196,10 @@ namespace C969
 
                     UpdateAppointmentDetails(con, appointmentId);
 
+                    // Store the updated time zone
+                    string timeZone = comboBox2.SelectedItem.ToString();
+                    TimeZoneStorage.SetTimeZone(appointmentId, timeZone);
+
                     Main form = (Main)Application.OpenForms["Main"];
                     if (form != null)
                     {
@@ -216,6 +220,7 @@ namespace C969
                 }
             }
         }
+
 
         public int GetPhoneByCustomerId(string customerName)
         {
@@ -304,7 +309,7 @@ namespace C969
                     if (rowsAffected > 0)
                     {
                         // Save the time zone to the dictionary
-                        TimeZoneStorage.SaveTimeZone(appointmentId, comboBox2.SelectedItem.ToString());
+                        TimeZoneStorage.SetTimeZone(appointmentId, comboBox2.SelectedItem.ToString());
 
                         MessageBox.Show("Appointment details updated successfully.");
                     }

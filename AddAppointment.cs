@@ -236,8 +236,9 @@ namespace C969
                     appointmentCmd.Parameters.AddWithValue("@LastUpdateBy", lastUpdateBy);
                     appointmentCmd.ExecuteNonQuery();
 
-                    // Save the time zone to the dictionary
-                    TimeZoneStorage.SaveTimeZone(appointmentId, comboBox2.SelectedItem.ToString());
+                    // Store the selected time zone
+                    string timeZone = comboBox2.SelectedItem.ToString();
+                    TimeZoneStorage.SetTimeZone(appointmentId, timeZone);
 
                     Main form = (Main)Application.OpenForms["Main"];
                     if (form != null)
@@ -260,6 +261,7 @@ namespace C969
                 }
             }
         }
+
 
 
 
