@@ -20,8 +20,6 @@ namespace C969
             _selectedRow = selectedRow;
         }
 
-        private int appointmentId_Counter;
-
         private async void UpdateAppointment_Load(object sender, EventArgs e)
         {
             System.Windows.Forms.TextBox.CheckForIllegalCrossThreadCalls = false;
@@ -74,7 +72,7 @@ namespace C969
         {
             textBox1.Text = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToShortDateString();
             comboBox1.SelectedItem = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToString("hh:mm tt");
-            textBox4.Text = _selectedRow.Cells["Type"].Value.ToString();
+            textBox4.Text = _selectedRow.Cells["Title"].Value.ToString(); // Assuming "Title" column exists
             textBox5.Text = _selectedRow.Cells["Description"].Value.ToString();
             textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
             // Assuming TimeZone column exists in your DataGridView and database
@@ -292,14 +290,14 @@ namespace C969
                 string description = textBox5.Text;
                 string timeZone = comboBox2.SelectedItem.ToString(); // Capture time zone
 
-                string query = "UPDATE Appointment SET Start = @Start, End = @End, Type = @Type, Description = @Description, TimeZone = @TimeZone WHERE appointmentId = @AppointmentId";
+                // Update query to exclude non-existing columns
+                string query = "UPDATE Appointment SET Start = @Start, End = @End, Title = @Type, Description = @Description WHERE appointmentId = @AppointmentId";
                 using (MySqlCommand cmd = new MySqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@Start", start);
                     cmd.Parameters.AddWithValue("@End", end);
-                    cmd.Parameters.AddWithValue("@Type", type);
+                    cmd.Parameters.AddWithValue("@Type", type); // Use "Title" column for the type
                     cmd.Parameters.AddWithValue("@Description", description);
-                    cmd.Parameters.AddWithValue("@TimeZone", timeZone); // Set time zone
                     cmd.Parameters.AddWithValue("@AppointmentId", appointmentId);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
