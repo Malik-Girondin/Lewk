@@ -195,7 +195,7 @@ namespace C969
 
                     string description = textBox5.Text;
                     string location = "Main Office";
-                    string type = textBox4.Text;  // Capture type from textBox4
+                    string type = textBox4.Text;
                     string contact = GetPhoneByCustomerId(customerName).ToString();
                     string url = ".";
                     DateTime selectedDate = monthCalendar1.SelectionStart.Date;
@@ -213,11 +213,11 @@ namespace C969
                     string createdBy = "sqlUser";
                     string lastUpdate = createDate.ToString("yyyy-MM-dd HH:mm:ss");
                     string lastUpdateBy = "sqlUser";
-                    string timeZone = comboBox2.SelectedItem.ToString(); // Capture time zone
 
                     string appointmentQuery = @"
-                INSERT INTO appointment (CustomerId, userId, title, description, location, contact, type, url, start, end, CreateDate, CreatedBy, LastUpdate, LastUpdateBy, TimeZone) 
-                VALUES (@CustomerId, @UserId, @Title, @Description, @Location, @Contact, @Type, @Url, @Start, @End, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy, @TimeZone)
+                INSERT INTO appointment (CustomerId, userId, title, description, location, contact, type, url, start, end, CreateDate, CreatedBy, LastUpdate, LastUpdateBy) 
+                VALUES (@CustomerId, @UserId, @Title, @Description, @Location, @Contact, @Type, @Url, @Start, @End, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy);
+                SELECT LAST_INSERT_ID();
             ";
 
                     MySqlCommand appointmentCmd = new MySqlCommand(appointmentQuery, con);
@@ -235,8 +235,12 @@ namespace C969
                     appointmentCmd.Parameters.AddWithValue("@CreatedBy", createdBy);
                     appointmentCmd.Parameters.AddWithValue("@LastUpdate", lastUpdate);
                     appointmentCmd.Parameters.AddWithValue("@LastUpdateBy", lastUpdateBy);
-                    appointmentCmd.Parameters.AddWithValue("@TimeZone", timeZone);
-                    appointmentCmd.ExecuteNonQuery();
+
+                    int newAppointmentId = Convert.ToInt32(appointmentCmd.ExecuteScalar());
+
+                    // Store the selected time zone
+                    string timeZone = comboBox2.SelectedItem.ToString();
+                    TimeZoneStorage.SetTimeZone(newAppointmentId, timeZone);
 
                     Main form = (Main)Application.OpenForms["Main"];
                     if (form != null)
@@ -259,7 +263,6 @@ namespace C969
                 }
             }
         }
-
 
 
 
