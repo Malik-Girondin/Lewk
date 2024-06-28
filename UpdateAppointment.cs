@@ -72,11 +72,9 @@ namespace C969
         {
             textBox1.Text = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToShortDateString();
             comboBox1.SelectedItem = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToString("hh:mm tt");
-            textBox4.Text = _selectedRow.Cells["Title"].Value.ToString(); // Assuming "Title" column exists
+            textBox4.Text = _selectedRow.Cells["Title"].Value.ToString();
             textBox5.Text = _selectedRow.Cells["Description"].Value.ToString();
-
-            int customerId = Convert.ToInt32(_selectedRow.Cells["CustomerID"].Value);
-            textBox3.Text = GetCustomerNameById(customerId); // Fetch and display the customer name
+            textBox3.Text = GetCustomerNameById(Convert.ToInt32(_selectedRow.Cells["CustomerID"].Value)); // Fetch customer name
 
             // Retrieve and set the stored time zone
             int appointmentId = Convert.ToInt32(_selectedRow.Cells["appointmentId"].Value);
@@ -92,19 +90,10 @@ namespace C969
             using (MySqlConnection con = new MySqlConnection(connectionString))
             using (MySqlCommand cmd = new MySqlCommand(query, con))
             {
-                try
-                {
-                    cmd.Parameters.AddWithValue("@CustomerID", customerId);
-                    con.Open();
-
-                    object result = cmd.ExecuteScalar();
-                    return result != null && result != DBNull.Value ? result.ToString() : string.Empty;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.Message);
-                    return string.Empty;
-                }
+                cmd.Parameters.AddWithValue("@CustomerID", customerId);
+                con.Open();
+                object result = cmd.ExecuteScalar();
+                return result != null ? result.ToString() : string.Empty;
             }
         }
 

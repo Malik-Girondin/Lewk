@@ -197,9 +197,7 @@ namespace C969
                 {
                     con.Open();
 
-                    string query = "SELECT appointment.appointmentId, appointment.CustomerID, appointment.Title, appointment.Description, appointment.Start, appointment.End " +
-                                   "FROM appointment ";
-
+                    string query = "SELECT appointmentId, CustomerID, Title, Description, Start, End FROM appointment";
                     MySqlCommand cmd = new MySqlCommand(query, con);
 
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
