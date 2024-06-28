@@ -72,14 +72,25 @@ namespace C969
         {
             textBox1.Text = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToShortDateString();
             comboBox1.SelectedItem = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToString("hh:mm tt");
-            textBox4.Text = _selectedRow.Cells["Title"].Value.ToString();
+            textBox4.Text = _selectedRow.Cells["Title"].Value.ToString(); // Assuming "Title" column exists
             textBox5.Text = _selectedRow.Cells["Description"].Value.ToString();
-            textBox3.Text = GetCustomerNameById(Convert.ToInt32(_selectedRow.Cells["CustomerID"].Value)); // Fetch customer name
+            textBox3.Text = _selectedRow.Cells["CustomerID"].Value.ToString();
 
             // Retrieve and set the stored time zone
             int appointmentId = Convert.ToInt32(_selectedRow.Cells["appointmentId"].Value);
             string timeZoneValue = TimeZoneStorage.GetTimeZone(appointmentId);
             comboBox2.SelectedItem = timeZoneValue;
+
+            // Adjust the appointment time according to the stored time zone
+            if (!string.IsNullOrEmpty(timeZoneValue))
+            {
+                TimeZoneInfo appointmentTimeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneValue);
+                DateTime startUtc = TimeZoneInfo.ConvertTimeToUtc(Convert.ToDateTime(_selectedRow.Cells["Start"].Value), appointmentTimeZone);
+                DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(startUtc, TimeZoneInfo.Local);
+
+                textBox1.Text = localTime.ToShortDateString();
+                comboBox1.SelectedItem = localTime.ToString("hh:mm tt");
+            }
         }
 
         private string GetCustomerNameById(int customerId)
@@ -310,15 +321,20 @@ namespace C969
                 string description = textBox5.Text;
                 string timeZone = comboBox2.SelectedItem.ToString(); // Capture time zone
 
-                // Update query to exclude non-existing columns
-                string query = "UPDATE Appointment SET Start = @Start, End = @End, Title = @Type, Description = @Description WHERE appointmentId = @AppointmentId";
+                // Convert to UTC based on the selected time zone before saving
+                TimeZoneInfo appointmentTimeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
+                DateTime startUtc = TimeZoneInfo.ConvertTimeToUtc(start, appointmentTimeZone);
+                DateTime endUtc = TimeZoneInfo.ConvertTimeToUtc(end, appointmentTimeZone);
+
+                string query = "UPDATE Appointment SET Start = @Start, End = @End, Title = @Type, Description = @Description, TimeZone = @TimeZone WHERE appointmentId = @AppointmentId";
                 using (MySqlCommand cmd = new MySqlCommand(query, con))
                 {
-                    cmd.Parameters.AddWithValue("@Start", start);
-                    cmd.Parameters.AddWithValue("@End", end);
+                    cmd.Parameters.AddWithValue("@Start", startUtc);
+                    cmd.Parameters.AddWithValue("@End", endUtc);
                     cmd.Parameters.AddWithValue("@Type", type); // Use "Title" column for the type
                     cmd.Parameters.AddWithValue("@Description", description);
                     cmd.Parameters.AddWithValue("@AppointmentId", appointmentId);
+                    cmd.Parameters.AddWithValue("@TimeZone", timeZone);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
                     if (rowsAffected > 0)
