@@ -83,7 +83,6 @@ namespace C969
             }
         }
 
-
         private void AppointmentTimer_Tick(object sender, EventArgs e)
         {
             GenerateAppointmentAlerts();
@@ -95,7 +94,6 @@ namespace C969
             customerAdd.FormClosed += (s, args) => { UpdateDataGridView(); };
             customerAdd.textBox1.Text = customerAdd.addressID_Counter + 1.ToString();
             customerAdd.ShowDialog();
-
         }
 
         public void GenerateAppointmentAlerts()
@@ -156,6 +154,7 @@ namespace C969
         {
             UpdateDataGridView();
             UpdateDataGridView2();
+            CheckAppointmentsWithin15Minutes(); // Add this line to check for appointments
         }
 
         public void UpdateDataGridView()
@@ -215,6 +214,34 @@ namespace C969
             }
         }
 
+        private void CheckAppointmentsWithin15Minutes() // Add this method to Main.cs
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["localdb"].ConnectionString;
+            using (MySqlConnection con = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    con.Open();
+                    string query = @"
+                        SELECT COUNT(*) 
+                        FROM appointment 
+                        WHERE start BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 15 MINUTE)
+                    ";
+                    using (MySqlCommand cmd = new MySqlCommand(query, con))
+                    {
+                        int count = Convert.ToInt32(cmd.ExecuteScalar());
+                        if (count > 0)
+                        {
+                            MessageBox.Show("You have an appointment within the next 15 minutes!");
+                        }
+                    }
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+            }
+        }
 
         private void label1_Click(object sender, EventArgs e)
         {
@@ -390,12 +417,6 @@ namespace C969
                 MessageBox.Show("No row has been selected");
             }
         }
-
-
-
-
-
-
 
         public static void NumberOfAppointmentTypesByMonth(List<Appointment> appointments)
         {
