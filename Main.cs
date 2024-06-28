@@ -15,11 +15,10 @@ namespace C969
         public Main()
         {
             InitializeComponent();
-            string connectionString = ConfigurationManager.ConnectionStrings["localdb"].ConnectionString;
+            connectionString = ConfigurationManager.ConnectionStrings["localdb"].ConnectionString;
             reportGenerator = new ReportGenerator(connectionString);
-            GenerateAppointmentAlerts();
             appointmentTimer = new Timer();
-            appointmentTimer.Interval = 60000;
+            appointmentTimer.Interval = 60000; // Check every minute
             appointmentTimer.Tick += AppointmentTimer_Tick;
             appointmentTimer.Start();
         }
@@ -85,8 +84,9 @@ namespace C969
 
         private void AppointmentTimer_Tick(object sender, EventArgs e)
         {
-            GenerateAppointmentAlerts();
+            CheckAppointmentsWithin15Minutes(); // Check every minute
         }
+
 
         private void Add_Click(object sender, EventArgs e)
         {
@@ -150,11 +150,11 @@ namespace C969
 
         }
 
-        public void Main_Load(object sender, EventArgs e)
+        private void Main_Load(object sender, EventArgs e)
         {
             UpdateDataGridView();
             UpdateDataGridView2();
-            CheckAppointmentsWithin15Minutes(); // Add this line to check for appointments
+            CheckAppointmentsWithin15Minutes(); // Initial check when the form loads
         }
 
         public void UpdateDataGridView()
@@ -214,9 +214,8 @@ namespace C969
             }
         }
 
-        private void CheckAppointmentsWithin15Minutes() // Add this method to Main.cs
+        private void CheckAppointmentsWithin15Minutes()
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["localdb"].ConnectionString;
             using (MySqlConnection con = new MySqlConnection(connectionString))
             {
                 try
@@ -225,7 +224,7 @@ namespace C969
                     string query = @"
                         SELECT COUNT(*) 
                         FROM appointment 
-                        WHERE start BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 15 MINUTE)
+                        WHERE Start BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 15 MINUTE)
                     ";
                     using (MySqlCommand cmd = new MySqlCommand(query, con))
                     {
