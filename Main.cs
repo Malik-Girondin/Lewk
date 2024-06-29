@@ -150,12 +150,7 @@ namespace C969
 
         }
 
-        private DateTime ConvertToUserTimeZone(DateTime dateTime, string timeZoneId)
-        {
-            TimeZoneInfo userTimeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-            DateTime userDateTime = TimeZoneInfo.ConvertTime(dateTime, userTimeZone);
-            return userDateTime;
-        }
+       
 
 
         private void Main_Load(object sender, EventArgs e)
@@ -243,12 +238,7 @@ namespace C969
                                 int appointmentId = reader.GetInt32("appointmentId");
                                 DateTime start = reader.GetDateTime("Start");
 
-                                // Get the stored time zone for the appointment
-                                string timeZoneId = TimeZoneStorage.GetTimeZone(appointmentId);
-                                if (!string.IsNullOrEmpty(timeZoneId))
-                                {
-                                    start = ConvertToUserTimeZone(start, timeZoneId);
-                                }
+    
 
                                 TimeSpan timeUntilAppointment = start - DateTime.Now;
                                 if (timeUntilAppointment <= TimeSpan.FromMinutes(15))
