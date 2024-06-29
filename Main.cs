@@ -150,6 +150,14 @@ namespace C969
 
         }
 
+        private DateTime ConvertToUserTimeZone(DateTime dateTime, string timeZoneId)
+        {
+            TimeZoneInfo userTimeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            DateTime userDateTime = TimeZoneInfo.ConvertTime(dateTime, userTimeZone);
+            return userDateTime;
+        }
+
+
         private void Main_Load(object sender, EventArgs e)
         {
             UpdateDataGridView();
@@ -222,16 +230,32 @@ namespace C969
                 {
                     con.Open();
                     string query = @"
-                SELECT COUNT(*) 
+                SELECT appointmentId, Start 
                 FROM appointment 
                 WHERE Start BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 15 MINUTE)
             ";
                     using (MySqlCommand cmd = new MySqlCommand(query, con))
                     {
-                        int count = Convert.ToInt32(cmd.ExecuteScalar());
-                        if (count > 0)
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
                         {
-                            MessageBox.Show("You have an appointment within the next 15 minutes!");
+                            while (reader.Read())
+                            {
+                                int appointmentId = reader.GetInt32("appointmentId");
+                                DateTime start = reader.GetDateTime("Start");
+
+                                // Get the stored time zone for the appointment
+                                string timeZoneId = TimeZoneStorage.GetTimeZone(appointmentId);
+                                if (!string.IsNullOrEmpty(timeZoneId))
+                                {
+                                    start = ConvertToUserTimeZone(start, timeZoneId);
+                                }
+
+                                TimeSpan timeUntilAppointment = start - DateTime.Now;
+                                if (timeUntilAppointment <= TimeSpan.FromMinutes(15))
+                                {
+                                    MessageBox.Show("You have an appointment within the next 15 minutes!");
+                                }
+                            }
                         }
                     }
                 }
