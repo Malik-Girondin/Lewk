@@ -281,15 +281,16 @@ namespace C969
         private void PopulateAppointmentTimes()
         {
             comboBox1.Items.Clear();
-            for (int hour = 0; hour < 24; hour++)
+            DateTime startTime = new DateTime(2024, 1, 1, 9, 0, 0); // Start at 9:00 AM
+            DateTime endTime = new DateTime(2024, 1, 1, 17, 0, 0); // End at 5:00 PM
+
+            while (startTime <= endTime)
             {
-                for (int minute = 0; minute < 60; minute += 15)
-                {
-                    DateTime time = new DateTime(2024, 1, 1, hour, minute, 0);
-                    comboBox1.Items.Add(time.ToString("hh:mm tt"));
-                }
+                comboBox1.Items.Add(startTime.ToString("hh:mm tt"));
+                startTime = startTime.AddMinutes(15);
             }
         }
+
 
         private void Form_Load(object sender, EventArgs e)
         {
