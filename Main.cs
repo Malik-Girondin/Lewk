@@ -222,10 +222,10 @@ namespace C969
                 {
                     con.Open();
                     string query = @"
-                        SELECT COUNT(*) 
-                        FROM appointment 
-                        WHERE Start BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 15 MINUTE)
-                    ";
+                SELECT COUNT(*) 
+                FROM appointment 
+                WHERE Start BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 15 MINUTE)
+            ";
                     using (MySqlCommand cmd = new MySqlCommand(query, con))
                     {
                         int count = Convert.ToInt32(cmd.ExecuteScalar());
