@@ -68,7 +68,6 @@ namespace C969
             }
         }
 
-
         private void LoadAppointmentDetails()
         {
             textBox1.Text = Convert.ToDateTime(_selectedRow.Cells["Start"].Value).ToShortDateString();
@@ -236,7 +235,6 @@ namespace C969
                 }
             }
         }
-
 
         public int GetPhoneByCustomerId(string customerName)
         {
